@@ -50,13 +50,12 @@ export default function Login() {
     await HandleLogin(event)
       .then((res) => {
         if (res.status === 200) {
-          // console.log(res.data.userDetails, 'rrrrrrrrrrrrrr', event);
           localStorage.setItem("loginToken", res.data.loginToken);
           localStorage.setItem(
             "userData",
             JSON.stringify(res.data.userDetails)
           );
-          router.push("/books");
+          router.push("/profile");
         }
         setLoading(false);
       })
