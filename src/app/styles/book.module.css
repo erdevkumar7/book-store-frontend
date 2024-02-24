@@ -9,3 +9,17 @@
   .tableLastCell {
     text-align: center !important;
   }
+
+  .upperFilterBox {
+    float: right !important;
+    display: flex !important;
+    align-items: center !important;
+  }
+
+  .applyButtonInFiltter {
+    margin-left: 10px !important;
+  }
+
+  .boxInFilter {
+    float: right !important;
+  }
