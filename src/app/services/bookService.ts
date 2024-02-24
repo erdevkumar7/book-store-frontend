@@ -1,5 +1,5 @@
-// import { LoginHeader, authHeader } from "@/common/Tokens/authToken";
 // import { HandleLogout } from "./auth";
+import { authHeader } from "@/common/authToken";
 import { API } from "@/config/config";
 import axios from "axios";
 import { toast } from "react-toastify";
@@ -15,8 +15,8 @@ export const HandleGetBooks = async (searchData: any, filterData: any) => {
     return await axios({
         method: "POST",
         url: API_URL,
-        //   headers: authHeader(),
         data: filterData,
+        headers: authHeader(),
     })
         .then((request) => {
             return request;

@@ -1,5 +1,6 @@
 "use client";
-import React from "react";
+import React, { useLayoutEffect } from "react";
+import { redirect } from 'next/navigation';
 // MUI Components
 import Navbar from "@/components/Navbar";
 import {
@@ -13,6 +14,7 @@ import {
   IconButton,
   InputLabel,
   MenuItem,
+  Pagination,
   Paper,
   Popover,
   Select,
@@ -43,6 +45,8 @@ import SpinnerProgress from "@/common/spinnerPgress";
 // API calling function
 import { HandleGetBooks } from "../services/bookService";
 import { Controller, useForm } from "react-hook-form";
+import { isAuthenticated } from "@/common/authToken";
+
 
 interface Column {
   id: "title" | "author" | "category" | "description" | "price" | "add_to_cart";
@@ -89,6 +93,14 @@ function Profile() {
   // react hook form
   const { handleSubmit, control, reset } = useForm();
 
+
+  useLayoutEffect(() => {
+    const isAuth = isAuthenticated();
+    if(!isAuth){
+      redirect("/")
+    }
+  }, [])
+
   // useEffect
   React.useEffect(() => {
     setLoading(true);
@@ -108,16 +120,17 @@ function Profile() {
 
   // react hook form submission for fillter book data
   const onSubmit = (event: any) => {
+    console.log('even',event)
     HandleGetBooks("", event).then((itemFiltered) => {
       setRows(itemFiltered.data);
       setFilterObject(event);
     });
   };
-  // filter book s data
+  // filter books data
   const resetFilterValue = () => {
     setFilter(0);
-    reset({ is_chargeable: 0, status: 0 });
-    getAllBooksData("", { is_chargeable: 0, status: 0 });
+    reset({ author: 0, category: 0 });
+    getAllBooksData("", { author: 0, category: 0 });
   };
 
 
@@ -128,7 +141,7 @@ function Profile() {
       DATA.jump(1);
     }
     if (identifier === "reset") {
-      getAllBooksData("", { is_chargeable: 0, status: 0 });
+      getAllBooksData("", { author: 0, category: 0 });
       setSearch(e);
     } else {
       const search = e.target.value;
@@ -415,6 +428,43 @@ function Profile() {
                   )}
                 </TableBody>
               </Table>
+              <Stack
+                    className={bookStyle.stackStyle}
+                    direction="row"
+                    alignItems="right"
+                    justifyContent="space-between"
+                  >
+                    <Pagination
+                      className="pagination"
+                      count={count}
+                      page={page}
+                      color="primary"
+                      onChange={handlePageChange}
+                    />
+                    <Box>
+                      <Typography
+                        component={"span"}
+                        mr={2}
+                        className="paginationShowinig"
+                      >
+                        Showing {endIndex} of {rows && rows.length} Results
+                      </Typography>
+                      <FormControl>
+                        <Select
+                          labelId="demo-simple-select-label"
+                          id="demo-simple-select"
+                          defaultValue={10}
+                          onChange={handlerowchange}
+                          size="small"
+                          style={{ height: "40px", marginRight: "11px" }}
+                        >
+                          <MenuItem value={10}>10</MenuItem>
+                          <MenuItem value={20}>20</MenuItem>
+                          <MenuItem value={30}>30</MenuItem>
+                        </Select>
+                      </FormControl>
+                    </Box>
+                  </Stack>
             </TableContainer>
           </Paper>
         </CardContent>

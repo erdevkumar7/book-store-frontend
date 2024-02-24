@@ -49,13 +49,6 @@ export const HandleLogin = async (reqData: any) => {
     return error;
   })
 
-  // const apiData = await axios({
-  //         method: "POST",
-  //         url: `${BASE_URL}/login`,
-  //         data: reqData,
-  //       })
-
-  //       console.log('apiData', apiData)
 }
 
 export const HandleProfile = async (userId: any) => {
