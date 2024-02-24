@@ -49,8 +49,8 @@ export default function Registration() {
       const res = await HandleRegister(event);
       if (res.status === 201) {
         setTimeout(() => {
-          router.push("/");
-        }, 5000);
+          router.push("/login");
+        }, 4000);
         setLoading(false);
       }
     } catch (error) {

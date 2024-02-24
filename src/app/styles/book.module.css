@@ -1,0 +1,11 @@
+.tableContainer {
+    margin-top: 24px !important;
+  }
+
+  .tableHeadingForId {
+    font-weight: bold !important;
+  }
+
+  .tableLastCell {
+    text-align: center !important;
+  }
