@@ -1,4 +1,6 @@
 "use client";
+import React, { useState } from "react";
+// MUI component
 import {
   Box,
   Button,
@@ -9,22 +11,18 @@ import {
   Typography,
 } from "@mui/material";
 import Link from "next/link";
-import React, { useState } from "react";
-import styles from "./styles/login.module.css";
+// React Hook Form
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { userLoginValidations } from "../validation_schema/userValidation";
 import { LoadingButton } from "@mui/lab";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
-import { redirect } from "next/navigation";
 import CssBaseline from "@mui/material/CssBaseline";
-import FormControlLabel from "@mui/material/FormControlLabel";
-import Checkbox from "@mui/material/Checkbox";
 import Paper from "@mui/material/Paper";
-import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import { useRouter } from "next/navigation";
 import { ToastContainer } from "react-toastify";
+// Login API calling
 import { HandleLogin } from "../services/userServices";
 
 const defaultTheme = createTheme();
@@ -32,7 +30,7 @@ const defaultTheme = createTheme();
 export default function Login() {
   const [loading, setLoading] = useState<boolean>(false);
   const [showPassword, setShowPassword] = useState(false);
-  const [googleLoading, setGoogleLoading] = useState(false);
+
 
   const router = useRouter();
   const {
@@ -46,7 +44,6 @@ export default function Login() {
   const onSubmit = async (event: any) => {
     setLoading(true);
 
-    // console.log("event", event);
     await HandleLogin(event)
       .then((res) => {
         if (res.status === 200) {
@@ -117,7 +114,6 @@ export default function Login() {
               noValidate
               autoComplete="off"
               onSubmit={handleSubmit(onSubmit)}
-              // className={styles.mainBoxContentForm}
               sx={{ mt: 1 }}
             >
               <TextField
@@ -165,7 +161,6 @@ export default function Login() {
                   size="large"
                   variant="contained"
                   sx={{ mt: 3, mb: 2 }}
-                  // className={styles.mainBoxButton}
                 >
                   Sign In
                 </Button>
@@ -174,7 +169,6 @@ export default function Login() {
                   loading={loading}
                   fullWidth
                   size="large"
-                  // className={styles.mainBoxButton}
                   variant="outlined"
                   disabled
                 >

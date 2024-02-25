@@ -5,7 +5,6 @@ import Box from "@mui/material/Box";
 import Toolbar from "@mui/material/Toolbar";
 // Mui Icons
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
-import MenuIcon from "@mui/icons-material/Menu";
 import IconButton from "@mui/material/IconButton";
 import MenuItem from "@mui/material/MenuItem";
 import Menu from "@mui/material/Menu";
@@ -18,7 +17,6 @@ import Link from "next/link";
 import { HandleLogout } from "@/app/services/userServices";
 import { capitalizeFirstLetter } from "@/common/capitalizFirstLetter";
 import { isAuthenticated } from "@/common/authToken";
-import {} from "../../public/img/company_logo.png";
 
 export default function Navbar({ cartData }: any) {
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
@@ -142,7 +140,6 @@ export default function Navbar({ cartData }: any) {
     </Menu>
   );
 
-  // console.log("creattt", cartData, numberOfItems);
   return (
     <Box sx={{ flexGrow: 1 }}>
       {/* <Box>navbar getting cartData: {cartData?.title} </Box> */}
@@ -150,7 +147,7 @@ export default function Navbar({ cartData }: any) {
       <AppBar position="static" className={styles.appBarCss}>
         <Toolbar>
           {/* company logo here */}
-          <Link href="/">
+          <Link href="/profile">
             <Box
               component="img"
               src="/img/company_logo.png"

@@ -12,10 +12,13 @@ import {
 //CSS Styling
 import styles from "../../styles/navbar.module.css";
 import { useRouter } from "next/navigation";
+import { capitalizeFirstLetter } from "@/common/capitalizFirstLetter";
 function BookById({ params }: any) {
   const [loading, setLoading] = React.useState(false);
   const [rows, setRows] = React.useState<any>([]);
   const router = useRouter()
+
+
   useEffect(() => {
     getBookById(params?.id);
   }, []);
@@ -29,7 +32,7 @@ function BookById({ params }: any) {
       setLoading(false);
     }
   };
-  // console.log(rows);
+
 
   return (
     <>
@@ -44,7 +47,7 @@ function BookById({ params }: any) {
                 </Button>
               </Box>
 
-              <Typography variant="h4">Title: {rows.title}</Typography>
+              <Typography variant="h4">Title: {capitalizeFirstLetter(rows.title)}</Typography>
               <Typography variant="h6">Author: {rows.author}</Typography>
               <Typography variant="h6">Category: {rows.category}</Typography>
               <Typography variant="h6">

@@ -161,7 +161,6 @@ function Profile() {
     setCartDetailsVal([...getCartDetailsVal, row]);
   };
 
-  // console.log('eeeeeevv',getCartDetailsVal)
   return (
     <>
       {/* navigation bar component */}
