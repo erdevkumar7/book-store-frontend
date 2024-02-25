@@ -47,6 +47,7 @@ import SpinnerProgress from "@/common/spinnerPgress";
 import { HandleGetBooks } from "../services/bookService";
 import { Controller, useForm } from "react-hook-form";
 import { isAuthenticated } from "@/common/authToken";
+import Link from "next/link";
 // Create context
 export const cartContext: any = createContext("");
 
@@ -156,9 +157,9 @@ function Profile() {
     // setToggle(!toggle);
   };
 
-  const setCartDetails = (row: any) =>{
-    setCartDetailsVal([...getCartDetailsVal, row])
-  }
+  const setCartDetails = (row: any) => {
+    setCartDetailsVal([...getCartDetailsVal, row]);
+  };
 
   // console.log('eeeeeevv',getCartDetailsVal)
   return (
@@ -385,8 +386,14 @@ function Profile() {
                               >
                                 {/* book title */}
                                 <TableCell>
-                                  {capitalizeFirstLetter(row?.title)}
+                                  <Link
+                                    href={`/book/${row?._id}`}
+                                    style={{ color: "#1976d2" }}
+                                  >
+                                    {capitalizeFirstLetter(row?.title)}
+                                  </Link>
                                 </TableCell>
+
                                 {/* book author */}
                                 <TableCell>
                                   {capitalizeFirstLetter(row?.author)}
@@ -403,7 +410,9 @@ function Profile() {
                                 <TableCell>{row?.price}</TableCell>
 
                                 <TableCell>
-                                  <Button onClick={() => setCartDetails(row)}>Add</Button>
+                                  <Button onClick={() => setCartDetails(row)}>
+                                    Add
+                                  </Button>
                                 </TableCell>
                               </TableRow>
                             );

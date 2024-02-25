@@ -27,7 +27,7 @@ export default function Navbar({ cartData }: any) {
   const [userData, setUserData] = React.useState<any>("");
   const isMenuOpen = Boolean(anchorEl);
   const isMobileMenuOpen = Boolean(mobileMoreAnchorEl);
-  const numberOfItems = cartData.length;
+  const numberOfItems = cartData?.length;
   const router = useRouter();
 
   const StyledBadge = styled(Badge)<BadgeProps>(({ theme }: any) => ({
@@ -142,7 +142,7 @@ export default function Navbar({ cartData }: any) {
     </Menu>
   );
 
-  console.log("creattt", cartData, numberOfItems);
+  // console.log("creattt", cartData, numberOfItems);
   return (
     <Box sx={{ flexGrow: 1 }}>
       {/* <Box>navbar getting cartData: {cartData?.title} </Box> */}

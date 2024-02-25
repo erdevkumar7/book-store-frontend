@@ -7,9 +7,11 @@ export const FRONTEND_BASE_URL = "http://localhost:3000";
 export const BASE_URL = "http://localhost:8080";
 
 export const API = {
-  register: `${BASE_URL}/registration`,
-  login: `${BASE_URL}/loginuser`,
+  // userURL
+  register: `${BASE_URL}/user`,
+  login: `${BASE_URL}/login`,
 
+// booksURL
   getBooks: `${BASE_URL}/books`,
- 
+  getBookByBookId: `${BASE_URL}/book`,
 };

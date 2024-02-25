@@ -46,7 +46,7 @@ export default function Login() {
   const onSubmit = async (event: any) => {
     setLoading(true);
 
-    console.log("event", event);
+    // console.log("event", event);
     await HandleLogin(event)
       .then((res) => {
         if (res.status === 200) {

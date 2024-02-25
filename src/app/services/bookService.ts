@@ -23,10 +23,28 @@ export const HandleGetBooks = async (searchData: any, filterData: any) => {
         })
         .catch((error) => {
             if (error?.response?.status === 401) {
-                //   HandleLogout();
             } else {
                 toast.error("Something went wrong");
             }
             return error;
         });
 };
+
+export const HandleGetBookById = async (bookId: any) => {
+    const API_URL = `${API.getBookByBookId}/${bookId}`
+    return await axios({
+        method: "GET",
+        url: API_URL,
+        headers: authHeader(),
+    })
+        .then((request) => {
+            return request;
+        })
+        .catch((error) => {
+            if (error?.response?.status === 401) {
+            } else {
+                toast.error("Something went wrong");
+            }
+            return error;
+        });
+}
