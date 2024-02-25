@@ -157,8 +157,23 @@ function Profile() {
     // setToggle(!toggle);
   };
 
+  // Function to handle adding items to the cart
   const setCartDetails = (row: any) => {
     setCartDetailsVal([...getCartDetailsVal, row]);
+  };
+
+  // Function to handle removing items from the cart
+  const handleRemoveFromCart = (itemId: any) => {
+    const indexToRemove = getCartDetailsVal.findIndex(
+      (item: any) => item._id === itemId
+    );
+    if (indexToRemove !== -1) {
+      const updatedCart = [
+        ...getCartDetailsVal.slice(0, indexToRemove),
+        ...getCartDetailsVal.slice(indexToRemove + 1),
+      ];
+      setCartDetailsVal(updatedCart);
+    }
   };
 
   return (
@@ -285,7 +300,7 @@ function Profile() {
                                                 <MenuItem value={0}>
                                                   All
                                                 </MenuItem>
-                                                <MenuItem value={"acedemic"}>
+                                                <MenuItem value={"academic"}>
                                                   Acadedmic
                                                 </MenuItem>
                                                 <MenuItem value={"fiction"}>
@@ -407,10 +422,18 @@ function Profile() {
                                 </TableCell>
                                 {/* book price */}
                                 <TableCell>{row?.price}</TableCell>
-
+                                {/* addToCart */}
                                 <TableCell>
                                   <Button onClick={() => setCartDetails(row)}>
                                     Add
+                                  </Button>
+                                  {/* removeToCart */}
+                                  <Button
+                                    onClick={() =>
+                                      handleRemoveFromCart(row?._id)
+                                    }
+                                  >
+                                    Remove
                                   </Button>
                                 </TableCell>
                               </TableRow>

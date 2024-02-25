@@ -20,11 +20,13 @@ import { isAuthenticated } from "@/common/authToken";
 
 export default function Navbar({ cartData }: any) {
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
+  const [anchorCartEl, setAnchorCartEl] = React.useState<null | HTMLElement>(null);
   const [mobileMoreAnchorEl, setMobileMoreAnchorEl] =
     React.useState<null | HTMLElement>(null);
   const [userData, setUserData] = React.useState<any>("");
   const isMenuOpen = Boolean(anchorEl);
   const isMobileMenuOpen = Boolean(mobileMoreAnchorEl);
+  const isCartMenuOpen = Boolean(anchorCartEl);
   const numberOfItems = cartData?.length;
   const router = useRouter();
 
@@ -57,22 +59,60 @@ export default function Navbar({ cartData }: any) {
     }
   }, []);
 
-  const handleMobileMenuClose = () => {
-    setMobileMoreAnchorEl(null);
+  //profile menu 
+  const handleProfileMenuOpen = (event: React.MouseEvent<HTMLElement>) => {
+    setAnchorEl(event.currentTarget);
   };
-
+  
   const handleMenuClose = () => {
     setAnchorEl(null);
     handleMobileMenuClose();
   };
 
-  const handleProfileMenuOpen = (event: React.MouseEvent<HTMLElement>) => {
-    setAnchorEl(event.currentTarget);
-  };
-
+  // mobile menu
   const handleMobileMenuOpen = (event: React.MouseEvent<HTMLElement>) => {
     setMobileMoreAnchorEl(event.currentTarget);
+    };
+
+  const handleMobileMenuClose = () => {
+    setMobileMoreAnchorEl(null);
   };
+  
+//cart menu
+  const handleCartMenuOpen = (event: React.MouseEvent<HTMLElement>) => {
+    setAnchorCartEl(event.currentTarget);
+  };
+
+  const handleCartMenuClose = () =>{
+    setAnchorCartEl(null)
+  }
+
+
+
+
+  const cartMenuId = "primary-search-account-menu-cart";
+  const cartRenderMenu = (
+    <Menu
+      anchorEl={anchorEl}
+      anchorOrigin={{
+        vertical: "top",
+        horizontal: "right",
+      }}
+      id={cartMenuId}
+      keepMounted
+      transformOrigin={{
+        vertical: "top",
+        horizontal: "right",
+      }}
+      open={isCartMenuOpen}
+      
+      sx={{ marginTop: "25px !important"}}
+      onClose={handleCartMenuClose}
+    >
+      {cartData?.map((card:any) => <MenuItem ><Typography>{card.title}</Typography></MenuItem>)}
+    </Menu>
+  );
+
 
   const menuId = "primary-search-account-menu";
   const renderMenu = (
@@ -163,7 +203,15 @@ export default function Navbar({ cartData }: any) {
           <Box sx={{ display: { xs: "none", md: "flex" } }}>
             <Box sx={{ margin: "10px" }}>
               {/* <ShoppingCartIcon /> */}
-              <IconButton aria-label="cart">
+              <IconButton 
+                size="large"
+                edge="end"
+                aria-label="cart"
+                aria-controls={cartMenuId}
+                aria-haspopup="true"
+                color="inherit"
+                onClick={handleCartMenuOpen}
+              >
                 <StyledBadge badgeContent={numberOfItems} color="info">
                   <ShoppingCartIcon />
                 </StyledBadge>
@@ -208,6 +256,7 @@ export default function Navbar({ cartData }: any) {
       </AppBar>
       {renderMobileMenu}
       {renderMenu}
+      {cartRenderMenu}
     </Box>
   );
 }
