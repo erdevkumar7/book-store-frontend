@@ -1,6 +1,6 @@
 "use client";
-import React, { useLayoutEffect } from "react";
-import { redirect } from 'next/navigation';
+import React, { useLayoutEffect, createContext } from "react";
+import { redirect } from "next/navigation";
 // MUI Components
 import Navbar from "@/components/Navbar";
 import {
@@ -38,6 +38,7 @@ import ArrowUpwardOutlinedIcon from "@mui/icons-material/ArrowUpwardOutlined";
 import FilterAltOutlinedIcon from "@mui/icons-material/FilterAltOutlined";
 // Externam CSS
 import bookStyle from "../styles/book.module.css";
+import styles from "../styles/navbar.module.css";
 // Common functions
 import { usePagination } from "@/common/pagination";
 import { capitalizeFirstLetter } from "@/common/capitalizFirstLetter";
@@ -46,7 +47,8 @@ import SpinnerProgress from "@/common/spinnerPgress";
 import { HandleGetBooks } from "../services/bookService";
 import { Controller, useForm } from "react-hook-form";
 import { isAuthenticated } from "@/common/authToken";
-
+// Create context
+export const cartContext: any = createContext("");
 
 interface Column {
   id: "title" | "author" | "category" | "description" | "price" | "add_to_cart";
@@ -59,7 +61,7 @@ interface Column {
 const columns: Column[] = [
   { id: "title", label: "BOOK NAME", minWidth: 170 },
   { id: "author", label: "BOOK AUTHOR", minWidth: 100 },
-  { id: "category", label: "CATEGORY", minWidth: 100},
+  { id: "category", label: "CATEGORY", minWidth: 100 },
   { id: "description", label: "BOOK DESCRIPTION", minWidth: 100 },
   { id: "price", label: "PRICE($)", minWidth: 100 },
   { id: "add_to_cart", label: "ADD TO CART", minWidth: 100 },
@@ -70,7 +72,7 @@ function Profile() {
   const [loading, setLoading] = React.useState(false);
   const [rows, setRows] = React.useState<any>([]);
   const [toggle, setToggle] = React.useState<boolean>(false);
-
+  const [getCartDetailsVal, setCartDetailsVal] = React.useState<any>([]);
   const [getFilter, setFilter] = React.useState<number>(0);
   const [filterObject, setFilterObject] = React.useState<any>("");
   //pagination
@@ -93,13 +95,13 @@ function Profile() {
   // react hook form
   const { handleSubmit, control, reset } = useForm();
 
-
+  // check the login usability if not not access the page
   useLayoutEffect(() => {
     const isAuth = isAuthenticated();
-    if(!isAuth){
-      redirect("/")
+    if (!isAuth) {
+      redirect("/login");
     }
-  }, [])
+  }, []);
 
   // useEffect
   React.useEffect(() => {
@@ -120,7 +122,7 @@ function Profile() {
 
   // react hook form submission for fillter book data
   const onSubmit = (event: any) => {
-    console.log('even',event)
+    console.log("even", event);
     HandleGetBooks("", event).then((itemFiltered) => {
       setRows(itemFiltered.data);
       setFilterObject(event);
@@ -132,8 +134,6 @@ function Profile() {
     reset({ author: 0, category: 0 });
     getAllBooksData("", { author: 0, category: 0 });
   };
-
-
 
   const handleSearch = (e: any, identifier: any) => {
     setPage(1);
@@ -156,279 +156,283 @@ function Profile() {
     // setToggle(!toggle);
   };
 
-  console.log("rows", rows);
+  const setCartDetails = (row: any) =>{
+    setCartDetailsVal([...getCartDetailsVal, row])
+  }
 
+  // console.log('eeeeeevv',getCartDetailsVal)
   return (
-    <Grid
-      sx={{
-        display: "flex",
-        flexDirection: "column",
-        minHeight: "100vh",
-      }}
-    >
-      <Grid container spacing={3}>
-        <Navbar />
-      </Grid>
+    <>
+      {/* navigation bar component */}
+      <Navbar cartData={getCartDetailsVal} />
       {/* book listing - main content */}
-      <Card>
-        <CardContent>
-          {/* Serach Book */}
-          <TextField
-            id="standard-search"
-            value={search}
-            variant="outlined"
-            placeholder="Search by Book Name"
-            onChange={(e) => handleSearch(e, "")}
-            InputProps={{
-              endAdornment: !search ? (
-                <IconButton>
-                  <SearchOutlined />
-                </IconButton>
-              ) : (
-                <IconButton onClick={(e) => handleSearch("", "reset")}>
-                  {" "}
-                  <CloseIcon />
-                </IconButton>
-              ),
-            }}
-          />
-          {/* book filter */}
-          <Box className={bookStyle.upperFilterBox}>
-            <PopupState variant="popover" popupId="demo-popup-popover">
-              {(popupState) => (
-                <Box>
-                  <Button
-                    className={bookStyle.filterAltOutlinedIcon}
-                    {...bindTrigger(popupState)}
-                  >
-                    <FilterAltOutlinedIcon />
-                    Filter
-                  </Button>
-                  <Popover
-                    {...bindPopover(popupState)}
-                    style={{ width: "35% !important" }}
-                    anchorOrigin={{
-                      vertical: "bottom",
-                      horizontal: "left",
-                    }}
-                    transformOrigin={{
-                      vertical: "top",
-                      horizontal: "center",
-                    }}
-                  >
+      <Box className={styles.combineContentAndSidebar}>
+        <Box className={styles.siteBodyContainer}>
+          {/* main content */}
+          <Card>
+            <CardContent>
+              {/* Serach Book */}
+              <TextField
+                id="standard-search"
+                value={search}
+                variant="outlined"
+                placeholder="Search by Book Name"
+                onChange={(e) => handleSearch(e, "")}
+                InputProps={{
+                  endAdornment: !search ? (
+                    <IconButton>
+                      <SearchOutlined />
+                    </IconButton>
+                  ) : (
+                    <IconButton onClick={(e) => handleSearch("", "reset")}>
+                      {" "}
+                      <CloseIcon />
+                    </IconButton>
+                  ),
+                }}
+              />
+              {/* book filter */}
+              <Box className={bookStyle.upperFilterBox}>
+                <PopupState variant="popover" popupId="demo-popup-popover">
+                  {(popupState) => (
                     <Box>
-                      <Container
-                        className="filter-box"
-                        style={{ padding: "15px" }}
+                      <Button
+                        className={bookStyle.filterAltOutlinedIcon}
+                        {...bindTrigger(popupState)}
                       >
-                        <Grid>
-                          <Typography
-                            variant="h5"
-                            className={bookStyle.filterTypography}
-                          >
-                            Filter
-                          </Typography>
-                          <Box
-                            component="form"
-                            noValidate
-                            onSubmit={handleSubmit(onSubmit)}
-                          >
-                            <Stack
-                              style={{ marginTop: "10px" }}
-                              className="form-filter"
-                            >
-                              <Grid container spacing={2}>
-                                <Grid item xs={12} md={6} lg={6}>
-                                  <Stack spacing={2}>
-                                    <InputLabel
-                                      htmlFor="enddate"
-                                      className={bookStyle.typeFreePaid}
-                                    >
-                                      Author
-                                    </InputLabel>
-                                    <Controller
-                                      name="author"
-                                      control={control}
-                                      defaultValue={getFilter}
-                                      render={({ field }) => (
-                                        <FormControl fullWidth>
-                                          <Select {...field} displayEmpty>
-                                            <MenuItem value={0}>All</MenuItem>
-                                            <MenuItem value={"rd sharma"}>
-                                              RD sharma
-                                            </MenuItem>
-                                            <MenuItem value={"rajveer"}>
-                                              Rajveer
-                                            </MenuItem>
-                                          </Select>
-                                        </FormControl>
-                                      )}
-                                    />
-                                  </Stack>
-                                </Grid>
-                                <Grid item xs={12} md={6} lg={6}>
-                                  <Stack spacing={2}>
-                                    <InputLabel
-                                      htmlFor="enddate"
-                                      className={bookStyle.statusBold}
-                                    >
-                                      Category
-                                    </InputLabel>
-                                    <Controller
-                                      name="category"
-                                      control={control}
-                                      defaultValue={getFilter}
-                                      render={({ field }) => (
-                                        <FormControl fullWidth>
-                                          <Select {...field} displayEmpty>
-                                            <MenuItem value={0}>All</MenuItem>
-                                            <MenuItem value={"acedemic"}>
-                                              Acadedmic
-                                            </MenuItem>
-                                            <MenuItem value={"fiction"}>
-                                              Fiction
-                                            </MenuItem>
-                                            
-                                          </Select>
-                                        </FormControl>
-                                      )}
-                                    />
-                                  </Stack>
-                                </Grid>
-
-                                <Grid item xs={12} lg={12}>
-                                  <Box className={bookStyle.boxInFilter}>
-                                    <Button
-                                      size="medium"
-                                      variant="contained"
-                                      color="primary"
-                                      type="button"
-                                      onClick={() => {
-                                        resetFilterValue();
-                                        popupState.close();
-                                      }}
-                                    >
-                                      Reset
-                                    </Button>
-                                    <Button
-                                      size="medium"
-                                      type="submit"
-                                      variant="contained"
-                                      color="primary"
-                                      className={bookStyle.applyButtonInFiltter}
-                                      onClick={popupState.close}
-                                    >
-                                      Apply
-                                    </Button>
-                                  </Box>
-                                </Grid>
-                              </Grid>
-                            </Stack>
-                          </Box>
-                        </Grid>
-                      </Container>
-                    </Box>
-                  </Popover>
-                </Box>
-              )}
-            </PopupState>
-          </Box>
-          <Paper>
-            <TableContainer className={bookStyle.tableContainer}>
-              <Table stickyHeader aria-label="sticky table">
-                {/* table head */}
-                <TableHead>
-                  <TableRow>
-                    {columns?.map((column) => (
-                      <TableCell
-                        key={column.id}
-                        align={column.align}
-                        style={{ top: 0, minWidth: column.minWidth }}
-                        onClick={() => {
-                          column.label === "ID" ? handleSort(rows) : "";
+                        <FilterAltOutlinedIcon />
+                        Filter
+                      </Button>
+                      <Popover
+                        {...bindPopover(popupState)}
+                        style={{ width: "35% !important" }}
+                        anchorOrigin={{
+                          vertical: "bottom",
+                          horizontal: "left",
                         }}
-                        className={bookStyle.tableHeadingForId}
+                        transformOrigin={{
+                          vertical: "top",
+                          horizontal: "center",
+                        }}
                       >
-                        {column.label === "ID" ? (
-                          <>
-                            {column.label}
-                            {toggle ? (
-                              <ArrowDownwardOutlinedIcon fontSize="small" />
-                            ) : (
-                              <ArrowUpwardOutlinedIcon fontSize="small" />
-                            )}
-                          </>
-                        ) : (
-                          column.label
-                        )}
-                      </TableCell>
-                    ))}
-                  </TableRow>
-                </TableHead>
-                {/* table body */}
-
-                <TableBody>
-                  {!loading ? (
-                    rows && rows.length > 0 ? (
-                      DATA.currentData() &&
-                      DATA.currentData().map((row: any) => {
-                        return (
-                          <TableRow
-                            hover
-                            role="checkbox"
-                            tabIndex={-1}
-                            key={row._id}
+                        <Box>
+                          <Container
+                            className="filter-box"
+                            style={{ padding: "15px" }}
                           >
-                            {/* book title */}
-                            <TableCell>
-                              {capitalizeFirstLetter(row?.title)}
-                            </TableCell>
-                            {/* book author */}
-                            <TableCell>
-                              {capitalizeFirstLetter(row?.author)}
-                            </TableCell>
-                             {/* book category */}
-                             <TableCell>
-                              {capitalizeFirstLetter(row?.category)}
-                            </TableCell>
-                            {/* book description */}
-                            <TableCell>
-                              {capitalizeFirstLetter(row?.description)}
-                            </TableCell>
-                            {/* book price */}
-                            <TableCell>{row?.price}</TableCell>
+                            <Grid>
+                              <Typography
+                                variant="h5"
+                                className={bookStyle.filterTypography}
+                              >
+                                Filter
+                              </Typography>
+                              <Box
+                                component="form"
+                                noValidate
+                                onSubmit={handleSubmit(onSubmit)}
+                              >
+                                <Stack
+                                  style={{ marginTop: "10px" }}
+                                  className="form-filter"
+                                >
+                                  <Grid container spacing={2}>
+                                    <Grid item xs={12} md={6} lg={6}>
+                                      <Stack spacing={2}>
+                                        <InputLabel
+                                          htmlFor="enddate"
+                                          className={bookStyle.typeFreePaid}
+                                        >
+                                          Author
+                                        </InputLabel>
+                                        <Controller
+                                          name="author"
+                                          control={control}
+                                          defaultValue={getFilter}
+                                          render={({ field }) => (
+                                            <FormControl fullWidth>
+                                              <Select {...field} displayEmpty>
+                                                <MenuItem value={0}>
+                                                  All
+                                                </MenuItem>
+                                                <MenuItem value={"rd sharma"}>
+                                                  RD sharma
+                                                </MenuItem>
+                                                <MenuItem value={"rajveer"}>
+                                                  Rajveer
+                                                </MenuItem>
+                                              </Select>
+                                            </FormControl>
+                                          )}
+                                        />
+                                      </Stack>
+                                    </Grid>
+                                    <Grid item xs={12} md={6} lg={6}>
+                                      <Stack spacing={2}>
+                                        <InputLabel
+                                          htmlFor="enddate"
+                                          className={bookStyle.statusBold}
+                                        >
+                                          Category
+                                        </InputLabel>
+                                        <Controller
+                                          name="category"
+                                          control={control}
+                                          defaultValue={getFilter}
+                                          render={({ field }) => (
+                                            <FormControl fullWidth>
+                                              <Select {...field} displayEmpty>
+                                                <MenuItem value={0}>
+                                                  All
+                                                </MenuItem>
+                                                <MenuItem value={"acedemic"}>
+                                                  Acadedmic
+                                                </MenuItem>
+                                                <MenuItem value={"fiction"}>
+                                                  Fiction
+                                                </MenuItem>
+                                              </Select>
+                                            </FormControl>
+                                          )}
+                                        />
+                                      </Stack>
+                                    </Grid>
 
-                            <TableCell>
-                              <Button>Add</Button>
+                                    <Grid item xs={12} lg={12}>
+                                      <Box className={bookStyle.boxInFilter}>
+                                        <Button
+                                          size="medium"
+                                          variant="contained"
+                                          color="primary"
+                                          type="button"
+                                          onClick={() => {
+                                            resetFilterValue();
+                                            popupState.close();
+                                          }}
+                                        >
+                                          Reset
+                                        </Button>
+                                        <Button
+                                          size="medium"
+                                          type="submit"
+                                          variant="contained"
+                                          color="primary"
+                                          className={
+                                            bookStyle.applyButtonInFiltter
+                                          }
+                                          onClick={popupState.close}
+                                        >
+                                          Apply
+                                        </Button>
+                                      </Box>
+                                    </Grid>
+                                  </Grid>
+                                </Stack>
+                              </Box>
+                            </Grid>
+                          </Container>
+                        </Box>
+                      </Popover>
+                    </Box>
+                  )}
+                </PopupState>
+              </Box>
+              <Paper>
+                <TableContainer className={bookStyle.tableContainer}>
+                  <Table stickyHeader aria-label="sticky table">
+                    {/* table head */}
+                    <TableHead>
+                      <TableRow>
+                        {columns?.map((column) => (
+                          <TableCell
+                            key={column.id}
+                            align={column.align}
+                            style={{ top: 0, minWidth: column.minWidth }}
+                            onClick={() => {
+                              column.label === "ID" ? handleSort(rows) : "";
+                            }}
+                            className={bookStyle.tableHeadingForId}
+                          >
+                            {column.label === "ID" ? (
+                              <>
+                                {column.label}
+                                {toggle ? (
+                                  <ArrowDownwardOutlinedIcon fontSize="small" />
+                                ) : (
+                                  <ArrowUpwardOutlinedIcon fontSize="small" />
+                                )}
+                              </>
+                            ) : (
+                              column.label
+                            )}
+                          </TableCell>
+                        ))}
+                      </TableRow>
+                    </TableHead>
+                    {/* table body */}
+
+                    <TableBody>
+                      {!loading ? (
+                        rows && rows.length > 0 ? (
+                          DATA.currentData() &&
+                          DATA.currentData().map((row: any) => {
+                            return (
+                              <TableRow
+                                hover
+                                role="checkbox"
+                                tabIndex={-1}
+                                key={row._id}
+                              >
+                                {/* book title */}
+                                <TableCell>
+                                  {capitalizeFirstLetter(row?.title)}
+                                </TableCell>
+                                {/* book author */}
+                                <TableCell>
+                                  {capitalizeFirstLetter(row?.author)}
+                                </TableCell>
+                                {/* book category */}
+                                <TableCell>
+                                  {capitalizeFirstLetter(row?.category)}
+                                </TableCell>
+                                {/* book description */}
+                                <TableCell>
+                                  {capitalizeFirstLetter(row?.description)}
+                                </TableCell>
+                                {/* book price */}
+                                <TableCell>{row?.price}</TableCell>
+
+                                <TableCell>
+                                  <Button onClick={() => setCartDetails(row)}>Add</Button>
+                                </TableCell>
+                              </TableRow>
+                            );
+                          })
+                        ) : (
+                          <TableRow>
+                            <TableCell
+                              colSpan={7}
+                              className={bookStyle.tableLastCell}
+                              sx={{ fontWeight: 600 }}
+                            >
+                              {" "}
+                              Record not found{" "}
                             </TableCell>
                           </TableRow>
-                        );
-                      })
-                    ) : (
-                      <TableRow>
-                        <TableCell
-                          colSpan={7}
-                          className={bookStyle.tableLastCell}
-                          sx={{ fontWeight: 600 }}
-                        >
-                          {" "}
-                          Record not found{" "}
-                        </TableCell>
-                      </TableRow>
-                    )
-                  ) : (
-                    <TableRow>
-                      <TableCell
-                        colSpan={7}
-                        className={bookStyle.tableLastCell}
-                      >
-                        <SpinnerProgress />{" "}
-                      </TableCell>
-                    </TableRow>
-                  )}
-                </TableBody>
-              </Table>
-              <Stack
+                        )
+                      ) : (
+                        <TableRow>
+                          <TableCell
+                            colSpan={7}
+                            className={bookStyle.tableLastCell}
+                          >
+                            <SpinnerProgress />{" "}
+                          </TableCell>
+                        </TableRow>
+                      )}
+                    </TableBody>
+                  </Table>
+                  <Stack
                     className={bookStyle.stackStyle}
                     direction="row"
                     alignItems="right"
@@ -465,11 +469,13 @@ function Profile() {
                       </FormControl>
                     </Box>
                   </Stack>
-            </TableContainer>
-          </Paper>
-        </CardContent>
-      </Card>
-    </Grid>
+                </TableContainer>
+              </Paper>
+            </CardContent>
+          </Card>
+        </Box>
+      </Box>
+    </>
   );
 }
 

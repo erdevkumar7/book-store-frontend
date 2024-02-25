@@ -1,0 +1,12 @@
+.combineContentAndSidebar {
+    height: 100%;
+    display: flex;
+    top: 65px;
+    width: 100%;
+  }
+
+  .siteBodyContainer {
+    padding: 10px !important;
+    width: 100% !important;
+    background: #685f600d !important;
+  }

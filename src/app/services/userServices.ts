@@ -73,7 +73,7 @@ export const HandleProfile = async (userId: any) => {
 
 export const HandleLogout = () => {
   localStorage.clear()
-  window.location.replace("/");
+  window.location.replace("/login");
   // GenerateToken()
 
 };
